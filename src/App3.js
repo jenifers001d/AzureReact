@@ -217,7 +217,8 @@ class App3 extends React.Component {
 
   // Click "Customer Go To Book" and then fetch data
   getData = () => {
-    fetch("http://localhost:5500/book")
+    //fetch("http://localhost:5500/book")
+    fetch("/book")
       .then(data => data.json())
       .then(result => {
         this.setState({
@@ -230,7 +231,8 @@ class App3 extends React.Component {
       .catch(e => console.log("錯誤:", e));
   };
   makeBook = () => {
-    fetch("http://localhost:5500/book/makeBook", {
+    //fetch("http://localhost:5500/book/makeBook", {
+    fetch("/book/makeBook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
