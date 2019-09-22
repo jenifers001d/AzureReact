@@ -49,3 +49,33 @@ h2.myh2 {
   color: white;
   background-color: #007bff;
 }
+
+.before {
+  color: rgb(192, 192, 192);
+}
+
+.today {
+  background-color: rgb(252, 235, 221);
+}
+
+.selected {
+  background-color: rgb(188, 225, 255);
+}
+
+.mouse-on:hover {
+  background-color: #0088ff;
+  color: white;
+  border: 1px solid #0088ff;
+  border-radius: 5px;
+}
+
+div.busy {
+  background-color: rgb(255, 123, 123);
+  border: 1px solid rgb(255, 123, 123);
+  border-radius: 5px;
+}
+
+div.selecting {
+  background-color: rgb(188, 255, 218);
+  border: 1px solid rgb(188, 255, 218);
+}

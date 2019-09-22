@@ -221,6 +221,7 @@ class App3 extends React.Component {
     fetch("/book")
       .then(data => data.json())
       .then(result => {
+        //console.log(result);
         this.setState({
           data: result,
           business: JSON.parse(result.business),
@@ -243,14 +244,14 @@ class App3 extends React.Component {
         customerPhone: "213-555-0199",
         end: {
           "@odata.type": "#microsoft.graph.dateTimeTimeZone",
-          dateTime: "2019-09-10T09:30:00+10:00",
+          dateTime: "2019-09-18T11:00:00+10:00",
           timeZone: "Australia/Brisbane",
         },
         serviceId: "6fbd2880-9e81-4f0f-9d78-291d0ce9066f",
         serviceName: "Initial consult",
         start: {
           "@odata.type": "#microsoft.graph.dateTimeTimeZone",
-          dateTime: "2019-09-10T08:30:00+10:00",
+          dateTime: "2019-09-18T10:00:00+10:00",
           timeZone: "Australia/Brisbane",
         },
       }),
