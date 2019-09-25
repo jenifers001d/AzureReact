@@ -20,6 +20,30 @@ const InfoRight = styled.div`
   margin: 15px 10px 0px;
 `;
 class InfoForm extends React.Component {
+  state = {
+    userName: null,
+    userEmail: null,
+  };
+  inputName = e => {
+    this.setState(
+      {
+        userName: e.target.value,
+      },
+      () => {
+        this.props.getUserInfo(this.state);
+      }
+    );
+  };
+  inputEmail = e => {
+    this.setState(
+      {
+        userEmail: e.target.value,
+      },
+      () => {
+        this.props.getUserInfo(this.state);
+      }
+    );
+  };
   render() {
     return (
       <InfoWrapper>
@@ -31,11 +55,20 @@ class InfoForm extends React.Component {
                 type="text"
                 name="userName"
                 id="userName"
-                placeholder="Name"
+                placeholder="Name (Required)"
+                onChange={this.inputName}
+                required
               />
             </FormGroup>
             <FormGroup>
-              <Input type="email" name="email" id="email" placeholder="Email" />
+              <Input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email (Required)"
+                onChange={this.inputEmail}
+                required
+              />
             </FormGroup>
             <FormGroup>
               <Label for="select">Select Service</Label>

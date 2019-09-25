@@ -31,29 +31,40 @@ class ScheduleWeekdays extends React.Component {
     },
     mouseIsDown: false,
   };
-  handleMouseDown = (e, isFree) => {
-    console.log(isFree);
-    if (isFree) {
-      this.setState({
-        tempBookTime: {
-          tempStartTime: e.target.value,
-          tempEndTime: e.target.value,
+  handleMouseDown = (e, dayAfterToday, isFree) => {
+    const duration = 30 * 60 * 1000;
+    if (dayAfterToday && isFree) {
+      this.setState(
+        {
+          tempBookTime: {
+            tempStartTime: e.target.value,
+            tempEndTime: moment(e.target.value + duration),
+          },
+          mouseIsDown: true,
         },
-        mouseIsDown: true,
-      });
+        () => {
+          this.props.getDate(this.state.tempBookTime); // send selected time back to App2.js
+        }
+      );
     } else {
       alert("Please choose another day.");
     }
   };
-
   handleMouseOver = e => {
+    // when mouse is down, this method can start to work
     let { tempBookTime } = this.state;
-    this.setState({
-      tempBookTime: {
-        tempStartTime: tempBookTime.tempStartTime,
-        tempEndTime: e.target.value,
+    const duration = 30 * 60 * 1000;
+    this.setState(
+      {
+        tempBookTime: {
+          tempStartTime: tempBookTime.tempStartTime,
+          tempEndTime: moment(e.target.value + duration),
+        },
       },
-    });
+      () => {
+        this.props.getDate(this.state.tempBookTime); // send selected time back to App2.js
+      }
+    );
   };
   handleMouseUp = () => {
     this.setState({
@@ -62,26 +73,31 @@ class ScheduleWeekdays extends React.Component {
   };
   handleChooseBusyDay = busyDay => {
     let { tempBookTime } = this.state;
+    const duration = 30 * 60 * 1000;
     if (busyDay) {
-      //console.log(tempBookTime);
-      this.setState({
-        tempBookTime: {
-          tempStartTime: tempBookTime.tempStartTime,
-          tempEndTime: tempBookTime.tempStartTime,
+      this.setState(
+        {
+          tempBookTime: {
+            tempStartTime: tempBookTime.tempStartTime,
+            tempEndTime: moment(tempBookTime.tempStartTime + duration),
+          },
+          mouseIsDown: false,
         },
-        mouseIsDown: false,
-      });
+        () => {
+          this.props.getDate(this.state.tempBookTime); // send selected time back to App2.js
+        }
+      );
     }
   };
 
   renderCells = (day, dateEvents) => {
     const slotInterval = 30;
-    const startOfHour = moment(day)
+    const startOfHour = moment(day) // start time of a day
       .hour(8)
       .minute(0)
       .second(0)
       .millisecond(0);
-    const endOfHour = moment(day)
+    const endOfHour = moment(day) // end time of a day
       .hour(17)
       .minute(0)
       .second(0)
@@ -93,9 +109,16 @@ class ScheduleWeekdays extends React.Component {
     let isBusy;
     while (hour < endOfHour) {
       isBusy = false;
+      // if there is appointments which haven't been shown on schedule
       if (i < dateEvents.length) {
-        if (dateEvents[i].diff(hour, "minutes") === 0) {
-          isBusy = true;
+        let afterStart = dateEvents[i].start.diff(hour, "minutes") <= 0;
+        let beforeEnd = dateEvents[i].end.diff(hour, "minutes") > 0;
+        // if time is between busy appointment period, flag it is busy
+        if (afterStart && beforeEnd) {
+          isBusy = true; // isBusy will be passed into <SlotCell>
+        }
+        // if time is equal to end of appointment, jump to next appointment
+        if (dateEvents[i].end.diff(hour, "minutes") === 0) {
           i++;
         }
       }
@@ -105,9 +128,9 @@ class ScheduleWeekdays extends React.Component {
           key={hour}
           time={hour}
           isBusy={isBusy}
+          // tempBookTime is passed into for processing selecting css (green)
           tempBookTime={this.state.tempBookTime}
-          onMouseDown={this.handleMouseDown}
-          onMouseOver={this.handleMouseOver}
+          handleMouseDown={this.handleMouseDown}
           handleChooseBusyDay={this.handleChooseBusyDay}
         ></SlotCell>
       );
@@ -118,40 +141,38 @@ class ScheduleWeekdays extends React.Component {
 
   render() {
     const { current, events } = this.props;
-    console.log("ScheduleWeekdays");
-    console.log(events);
     const { mouseIsDown } = this.state;
     const weekdaysFormat = "ddd";
     const weekdatesFormat = "D";
     const startDay = moment(current).day(0); // The start day of this week(e.g. Sun 15)
     let weekdays = [];
-    let now = moment(new Date());
     let day, classes, curPosition, diff;
-    let j = 0;
-    // A week is 7 days, produce each column and slots from Sun to Sat
+    // A week is 7 days, produce each column and slots from Sun, Mon to Sat
     for (let i = 0; i < 7; i++) {
-      // add days to the start day of this week
+      // add day by day to the start day of this week
       day = moment(startDay).add(i, "d");
 
       // set days before today to gray color, and today to peach color
       classes = "";
       curPosition = moment(day);
-      diff = curPosition.diff(now, "hours");
+      diff = curPosition.diff(new Date(), "hours");
       if (diff < 0) {
         classes = "before";
       } else if (diff === 0) {
         classes = "today";
       }
 
-      // check if there is appointments at curPosition "this" day.
+      // check if there is appointments at curPosition "that" day.
       let dateEvents = [];
-      while (
-        j < events.length &&
-        curPosition.date() === moment(events[j].start).date()
-      ) {
-        dateEvents.push(moment(events[j].start));
-        j++;
-      }
+      events.forEach(event => {
+        if (curPosition.date() === moment(event.start).date()) {
+          dateEvents.push({
+            start: moment(event.start),
+            end: moment(event.end),
+          });
+        }
+      });
+      // if there is, pass appointments of that day into renderCells() as below
 
       weekdays.push(
         <DayWrapper

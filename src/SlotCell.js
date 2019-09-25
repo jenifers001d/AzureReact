@@ -5,64 +5,55 @@ import styled from "styled-components";
 const Cell = styled.div`
   border: 1px dashed rgb(228, 228, 228);
   width: 100%;
-  height: 35px;
+  height: 25px;
   text-align: center;
-  line-height: 35px;
+  line-height: 26px;
   margin: 1px 0px;
+  transition: all 0.05s ease-in-out;
 `;
 class SlotCell extends React.Component {
   state = {
     time: this.props.time,
     isPicked: null,
+    isHovered: false,
   };
-  blockFun = () => {
-    const dayAfterToday = this.state.time > new Date();
-    //const { events } = this.props;
-    if (dayAfterToday) {
+  checkAfterToday = () => {
+    const dayAfterToday = this.state.time.diff(new Date(), "days");
+    if (dayAfterToday > 0) {
       return true;
+    } else {
+      return false;
     }
-  };
-  handleClick = () => {
-    if (this.blockFun()) {
-      alert(this.state.time);
-    }
-  };
-
-  handleMouseDown = e => {
-    //e.target.classList.remove("mouse-on");
-    //e.target.classList.add("selecting");
   };
 
   handleMouseEnter = e => {
     e.target.value = this.state.time;
-    //e.target.classList.remove("mouse-on");
-    //e.target.classList.add("selecting");
+    this.setState({ isHovered: true });
   };
 
   handleMouseLeave = e => {
-    //e.target.classList.remove("selecting");
-    //e.target.classList.add("mouse-on");
+    this.setState({ isHovered: false });
   };
 
   render() {
-    const { time } = this.state;
+    const { time, isHovered } = this.state;
     const { isBusy, tempBookTime } = this.props;
     let chooseBusyDay = false;
     let classes = "";
-    if (this.blockFun() && isBusy) {
+    if (this.checkAfterToday() && isBusy) {
       classes = "busy";
-    } else if (this.blockFun() && isBusy === false) {
+    } else if (this.checkAfterToday() && isBusy === false) {
       classes = "mouse-on";
     }
-
+    // if time is between selecting appointment period, change classes to show green
     if (
-      time <= tempBookTime.tempEndTime &&
-      tempBookTime.tempStartTime <= time
+      this.checkAfterToday() &&
+      tempBookTime.tempStartTime <= time &&
+      time < tempBookTime.tempEndTime
     ) {
       if (!isBusy) {
         classes += " selecting";
       } else {
-        alert("You cannot choose busy day!");
         chooseBusyDay = true;
         this.props.handleChooseBusyDay(chooseBusyDay);
       }
@@ -70,13 +61,14 @@ class SlotCell extends React.Component {
     return (
       <Cell
         className={classes}
-        onClick={this.handleClick}
         value={time}
-        onMouseDown={e => this.props.onMouseDown(e, !isBusy)}
+        onMouseDown={e =>
+          this.props.handleMouseDown(e, this.checkAfterToday(), !isBusy)
+        }
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
       >
-        {moment(time).format("hh:mm A")}
+        {isHovered ? moment(time).format("hh:mm A") : ""}
       </Cell>
     );
   }
