@@ -11,11 +11,11 @@ body {
   white-space: pre-wrap;
 } */
 
-h2.myh2 {
+/* h2.myh2 {
   margin-top: 20px;
-}
+} */
 
-.panel {
+/* .panel {
   display: flex;
   flex-direction: row;
 }
@@ -23,7 +23,7 @@ h2.myh2 {
 .slots {
   width: 60%;
   padding: 0px 50px;
-}
+} */
 
 /* .slot-btn {
   display: inline-block;

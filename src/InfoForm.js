@@ -35,9 +35,19 @@ class InfoForm extends React.Component {
     );
   };
   inputEmail = e => {
+    let re = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i;
+    let emailContent = "";
+    if (e.target.value) {
+      let isMatch = e.target.value.match(re);
+      if (isMatch !== null) {
+        emailContent = e.target.value;
+      } else {
+        emailContent = "NotRightFormat";
+      }
+    }
     this.setState(
       {
-        userEmail: e.target.value,
+        userEmail: emailContent,
       },
       () => {
         this.props.getUserInfo(this.state);
@@ -57,7 +67,6 @@ class InfoForm extends React.Component {
                 id="userName"
                 placeholder="Name (Required)"
                 onChange={this.inputName}
-                required
               />
             </FormGroup>
             <FormGroup>
@@ -67,7 +76,6 @@ class InfoForm extends React.Component {
                 id="email"
                 placeholder="Email (Required)"
                 onChange={this.inputEmail}
-                required
               />
             </FormGroup>
             <FormGroup>

@@ -18,8 +18,12 @@ class SlotCell extends React.Component {
     isHovered: false,
   };
   checkAfterToday = () => {
-    const dayAfterToday = this.state.time.diff(new Date(), "days");
-    if (dayAfterToday > 0) {
+    //const dayAfterToday = this.state.time.diff(new Date(), "days");
+    // 這邊很奇怪，半夜要再試一次
+    const now = moment(new Date());
+    const dayAfterToday = this.state.time > now;
+    if (dayAfterToday) {
+      //console.log(now);
       return true;
     } else {
       return false;

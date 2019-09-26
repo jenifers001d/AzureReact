@@ -10,6 +10,7 @@ const DayWrapper = styled.div`
 const WeekTitleCell = styled.div`
   margin: 5px 10px;
   width: 14.2%;
+  height: 45px;
   line-height: 23px;
 `;
 const DateOfWeek = styled.div`
@@ -22,6 +23,26 @@ const RowCells = styled.div`
   justify-content: space-around;
 `;
 const SlotWrapper = styled.div``;
+const TimeCell = styled.div`
+  border: 1px dashed rgb(228, 228, 228);
+  width: 100%;
+  height: 51px;
+  text-align: center;
+  line-height: 26px;
+  margin: 1px 0px;
+`;
+
+const time = [
+  "8:00",
+  "9:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+];
 
 class ScheduleWeekdays extends React.Component {
   state = {
@@ -173,7 +194,6 @@ class ScheduleWeekdays extends React.Component {
         }
       });
       // if there is, pass appointments of that day into renderCells() as below
-
       weekdays.push(
         <DayWrapper
           key={i}
@@ -189,7 +209,19 @@ class ScheduleWeekdays extends React.Component {
         </DayWrapper>
       );
     }
-    return <RowCells>{weekdays}</RowCells>;
+    return (
+      <RowCells>
+        <DayWrapper>
+          <WeekTitleCell></WeekTitleCell>
+          <SlotWrapper>
+            {time.map(item => (
+              <TimeCell key={item}>{item}</TimeCell>
+            ))}
+          </SlotWrapper>
+        </DayWrapper>
+        {weekdays}
+      </RowCells>
+    );
   }
 }
 

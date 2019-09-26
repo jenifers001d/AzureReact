@@ -20,9 +20,11 @@ export default class NavBar extends React.Component {
             <NavbarBrand href="/">BOOKING WEB APP</NavbarBrand>
             <Nav navbar>
               <NavItem>
-                <NavLink href={url} target="_blank">
-                  Register
-                </NavLink>
+                {this.props.showRegister ? (
+                  <NavLink href={url} target="_blank">
+                    Register
+                  </NavLink>
+                ) : null}
               </NavItem>
             </Nav>
           </Container>

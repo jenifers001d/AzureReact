@@ -1,12 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import moment from "moment";
 import { Container, Button, Spinner } from "reactstrap";
 import styled from "styled-components";
-//import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/css/bootstrap.css";
 import NavBar from "./NavBar";
 import InfoForm from "./InfoForm";
 import Schedule from "./Schedule";
-import moment from "moment";
 
 const SentButton = styled(Button)`
   margin: 0px auto 10px;
@@ -40,7 +40,10 @@ class App2 extends React.Component {
     services: null,
     regisURL: null,
     selectedDate: null,
-    userInfo: null,
+    userInfo: {
+      userName: null,
+      userEmail: null,
+    },
     isLoad: false,
   };
 
@@ -80,36 +83,47 @@ class App2 extends React.Component {
   sentData = () => {
     // send data through bookings api
     const { selectedDate, userInfo } = this.state;
-    if (selectedDate && userInfo) {
-      //fetch("http://localhost:5500/book", {
-      fetch("/book", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          "@odata.type": "#microsoft.graph.bookingAppointment",
-          customerEmailAddress: userInfo.userEmail,
-          customerName: userInfo.userName,
-          customerNotes: "Please be on time.",
-          customerPhone: "213-555-0199",
-          end: {
-            "@odata.type": "#microsoft.graph.dateTimeTimeZone",
-            dateTime: moment(selectedDate.tempEndTime).format(),
-            timeZone: "Australia/Brisbane",
-          },
-          serviceId: "6fbd2880-9e81-4f0f-9d78-291d0ce9066f",
-          serviceName: "Initial consult",
-          start: {
-            "@odata.type": "#microsoft.graph.dateTimeTimeZone",
-            dateTime: moment(selectedDate.tempStartTime).format(),
-            timeZone: "Australia/Brisbane",
-          },
-        }),
-      }).then(res => {
-        window.location.reload();
-        //return res.text();
-      });
+    if (selectedDate && userInfo.userName && userInfo.userEmail) {
+      if (userInfo.userEmail !== "NotRightFormat") {
+        alert(
+          "Thank you for using BOOKING WEB APP.\nPlease wait for 5 sec ..."
+        );
+        //fetch("http://localhost:5500/book", {
+        fetch("/book", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            "@odata.type": "#microsoft.graph.bookingAppointment",
+            customerEmailAddress: userInfo.userEmail,
+            customerName: userInfo.userName,
+            customerNotes: "Please be on time.",
+            customerPhone: "213-555-0199",
+            end: {
+              "@odata.type": "#microsoft.graph.dateTimeTimeZone",
+              dateTime: moment(selectedDate.tempEndTime).format(),
+              timeZone: "Australia/Brisbane",
+            },
+            serviceId: "6fbd2880-9e81-4f0f-9d78-291d0ce9066f",
+            serviceName: "Initial consult",
+            start: {
+              "@odata.type": "#microsoft.graph.dateTimeTimeZone",
+              dateTime: moment(selectedDate.tempStartTime).format(),
+              timeZone: "Australia/Brisbane",
+            },
+          }),
+        }).then(res => {
+          window.location.reload();
+          //return res.text();
+        });
+      } else {
+        alert("Format of Email is wrong!");
+      }
     } else {
-      console.log("Something missing~");
+      if (selectedDate === null) {
+        alert("Please choose time~");
+      } else {
+        alert("Please input Name and Email !");
+      }
     }
   };
 
@@ -138,7 +152,7 @@ class App2 extends React.Component {
           <StyledSpinner color="primary" />
         </SpinnerWrapper>
         <div className={mainClasses}>
-          <NavBar url={regisURL} />
+          <NavBar url={regisURL} showRegister={noAccessTokenRecord} />
           <Container>
             {noAccessTokenRecord ? (
               <NoAccessTokenMsg>
