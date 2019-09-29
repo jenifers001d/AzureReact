@@ -18,12 +18,13 @@ class SlotCell extends React.Component {
     isHovered: false,
   };
   checkAfterToday = () => {
-    //const dayAfterToday = this.state.time.diff(new Date(), "days");
+    const { time } = this.state;
     // 這邊很奇怪，半夜要再試一次
-    const now = moment(new Date());
-    const dayAfterToday = this.state.time > now;
-    if (dayAfterToday) {
-      //console.log(now);
+    const now = moment(new Date()).startOf("day");
+    // 加了 start of day 後就沒問題了，確保 now 從 00:00 開始才會是大於等於一天
+    const dayAfterToday = time.diff(now, "days");
+    const noWorkDay = time.days();
+    if (dayAfterToday > 0 && noWorkDay !== 0 && noWorkDay !== 6) {
       return true;
     } else {
       return false;
@@ -32,11 +33,15 @@ class SlotCell extends React.Component {
 
   handleMouseEnter = e => {
     e.target.value = this.state.time;
-    this.setState({ isHovered: true });
+    this.setState({
+      isHovered: true,
+    });
   };
 
   handleMouseLeave = e => {
-    this.setState({ isHovered: false });
+    this.setState({
+      isHovered: false,
+    });
   };
 
   render() {
@@ -72,7 +77,8 @@ class SlotCell extends React.Component {
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
       >
-        {isHovered ? moment(time).format("hh:mm A") : ""}
+        {" "}
+        {isHovered ? moment(time).format("hh:mm A") : ""}{" "}
       </Cell>
     );
   }

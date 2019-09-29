@@ -182,6 +182,10 @@ class ScheduleWeekdays extends React.Component {
       } else if (diff === 0) {
         classes = "today";
       }
+      //console.log(curPosition.days());
+      if (curPosition.days() === 0 || curPosition.days() === 6) {
+        classes += " no-work-day";
+      }
 
       // check if there is appointments at curPosition "that" day.
       let dateEvents = [];

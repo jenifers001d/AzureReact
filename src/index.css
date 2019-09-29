@@ -54,6 +54,10 @@ div.hidden {
   display: none;
 }
 
+.no-work-day {
+  color: rgb(192, 192, 192);
+}
+
 .before {
   color: rgb(192, 192, 192);
 }
