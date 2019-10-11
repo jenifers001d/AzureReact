@@ -17,9 +17,9 @@ class SlotCell extends React.Component {
     isPicked: null,
     isHovered: false,
   };
+
   checkAfterToday = () => {
     const { time } = this.state;
-    // 這邊很奇怪，半夜要再試一次
     const now = moment(new Date()).startOf("day");
     // 加了 start of day 後就沒問題了，確保 now 從 00:00 開始才會是大於等於一天
     const dayAfterToday = time.diff(now, "days");
@@ -77,8 +77,7 @@ class SlotCell extends React.Component {
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
       >
-        {" "}
-        {isHovered ? moment(time).format("hh:mm A") : ""}{" "}
+        {isHovered ? moment(time).format("hh:mm A") : ""}
       </Cell>
     );
   }

@@ -81,20 +81,26 @@ class Schedule extends React.Component {
   };
 
   prevWeek = current => {
-    let curPosition = moment(current);
-    let diff = curPosition.diff(moment(new Date()), "days");
+    // need startOf, otherwise, the miliseconds will different
+    // and "diff" will equal to 6 instaed of 7
+    let now = moment(new Date()).startOf("day");
+    let curPosition = moment(current).startOf("day");
+    let diff = curPosition.diff(now, "days");
     // only can go back to last week and can go to next two weeks
-    if (-7 < diff && diff < 14) {
+    if (-7 < diff && diff <= 14) {
       this.setState({
         currentMonth: moment(current).subtract(1, "w"),
       });
     }
   };
   nextWeek = current => {
-    let curPosition = moment(current);
-    let diff = curPosition.diff(moment(new Date()), "days");
+    // need startOf, otherwise, the miliseconds will different
+    // and "diff" will equal to 6 instaed of 7
+    let now = moment(new Date()).startOf("day");
+    let curPosition = moment(current).startOf("day");
+    let diff = curPosition.diff(now, "days");
     // only can go back to last week and can go to next two weeks
-    if (-7 <= diff && diff < 13) {
+    if (-7 <= diff && diff < 14) {
       this.setState({
         currentMonth: moment(current).add(1, "w"),
       });
