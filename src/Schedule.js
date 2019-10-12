@@ -23,6 +23,7 @@ class Schedule extends React.Component {
   state = {
     currentMonth: new Date(),
     eventsArr: [],
+    isCheckEvents: false,
   };
 
   // When component did update, call storeEvents()
@@ -35,9 +36,10 @@ class Schedule extends React.Component {
         //duration: this.processMSTime(item.duration), // PT1H
       });
     });
-    if (this.state.eventsArr.length === 0) {
+    if (this.state.eventsArr.length === 0 && !this.state.isCheckEvents) {
       this.setState({
         eventsArr: bookingDateTime,
+        isCheckEvents: true,
       });
     }
   };
@@ -87,7 +89,7 @@ class Schedule extends React.Component {
     let curPosition = moment(current).startOf("day");
     let diff = curPosition.diff(now, "days");
     // only can go back to last week and can go to next two weeks
-    if (-7 < diff && diff <= 14) {
+    if (0 < diff && diff <= 7) {
       this.setState({
         currentMonth: moment(current).subtract(1, "w"),
       });
@@ -100,7 +102,7 @@ class Schedule extends React.Component {
     let curPosition = moment(current).startOf("day");
     let diff = curPosition.diff(now, "days");
     // only can go back to last week and can go to next two weeks
-    if (-7 <= diff && diff < 14) {
+    if (0 <= diff && diff < 7) {
       this.setState({
         currentMonth: moment(current).add(1, "w"),
       });
@@ -124,6 +126,7 @@ class Schedule extends React.Component {
           />
           <ScheduleWeekdays
             current={currentMonth}
+            business={this.props.business}
             events={eventsArr}
             getDate={this.props.getSelectedDate}
           />

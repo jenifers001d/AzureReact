@@ -43,6 +43,9 @@ class App2 extends React.Component {
     userInfo: {
       userName: null,
       userEmail: null,
+      selectedServiceName: null,
+      selectedServiceId: null,
+      serviceNotes: "",
     },
     isLoad: false,
   };
@@ -61,7 +64,7 @@ class App2 extends React.Component {
           .then(data => data.json())
           .then(bookingsResults => {
             this.setState({
-              business: bookingsResults.business,
+              business: bookingsResults.business, // businessHours will be passed into <Schedule/>
               calendarEvents: bookingsResults.events, // appointments will be passed into <Schedule/>
               services: bookingsResults.services,
               regisURL: urlResult,
@@ -75,15 +78,26 @@ class App2 extends React.Component {
       selectedDate: data,
     });
   };
-  getUserInfo = data => {
+  getInfo = data => {
     this.setState({
       userInfo: data,
     });
   };
   sentData = () => {
     // send data through bookings api
-    const { selectedDate, userInfo } = this.state;
-    if (selectedDate && userInfo.userName && userInfo.userEmail) {
+    const { services, selectedDate, userInfo } = this.state;
+    let selServiceName = null,
+      selServiceId = null;
+    if (userInfo.selectedServiceName) {
+      selServiceName = userInfo.selectedServiceName;
+      selServiceId = userInfo.selectedServiceId;
+    } else if (services) {
+      selServiceName = services[0].displayName;
+      selServiceId = services[0].id;
+    }
+
+    let info = userInfo.userName && userInfo.userEmail;
+    if (selectedDate && info) {
       if (userInfo.userEmail !== "NotRightFormat") {
         alert(
           "Thank you for using BOOKING WEB APP.\nPlease wait for 5 sec ..."
@@ -103,8 +117,9 @@ class App2 extends React.Component {
               dateTime: moment(selectedDate.tempEndTime).format(),
               timeZone: "Australia/Brisbane",
             },
-            serviceId: "6fbd2880-9e81-4f0f-9d78-291d0ce9066f",
-            serviceName: "Initial consult",
+            serviceId: selServiceId,
+            serviceName: selServiceName,
+            serviceNotes: userInfo.serviceNotes,
             start: {
               "@odata.type": "#microsoft.graph.dateTimeTimeZone",
               dateTime: moment(selectedDate.tempStartTime).format(),
@@ -122,7 +137,7 @@ class App2 extends React.Component {
       if (selectedDate === null) {
         alert("Please choose time~");
       } else {
-        alert("Please input Name and Email !");
+        alert("Please input Name and Email!");
       }
     }
   };
@@ -134,6 +149,7 @@ class App2 extends React.Component {
     console.log(business);
     console.log(calendarEvents);
     console.log(services);
+    //console.log(services["value"]);
     // when data haven't been loaded, hide main views and show loading img
     if (!isLoad) {
       mainClasses = "hidden";
@@ -167,8 +183,9 @@ class App2 extends React.Component {
                   render={() => {
                     return (
                       <>
-                        <InfoForm getUserInfo={this.getUserInfo} />
+                        <InfoForm services={services} getInfo={this.getInfo} />
                         <Schedule
+                          business={this.state.business}
                           events={this.state.calendarEvents}
                           getSelectedDate={this.getSelectedDate}
                         />
