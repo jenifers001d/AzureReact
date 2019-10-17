@@ -66,13 +66,14 @@ class App2 extends React.Component {
             this.setState({
               business: bookingsResults.business, // businessHours will be passed into <Schedule/>
               calendarEvents: bookingsResults.events, // appointments will be passed into <Schedule/>
-              services: bookingsResults.services,
+              services: bookingsResults.services, // services will be passed into <InfoForm/>
               regisURL: urlResult,
               isLoad: true,
             });
           });
       });
   };
+
   getSelectedDate = data => {
     this.setState({
       selectedDate: data,
