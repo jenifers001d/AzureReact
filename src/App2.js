@@ -84,11 +84,13 @@ class App2 extends React.Component {
       userInfo: data,
     });
   };
-  sentData = () => {
+
+  sendData = () => {
     // send data through bookings api
     const { services, selectedDate, userInfo } = this.state;
     let selServiceName = null,
       selServiceId = null;
+    // if user doesn't change service option, assign default values to selServiceName and selServiceId
     if (userInfo.selectedServiceName) {
       selServiceName = userInfo.selectedServiceName;
       selServiceId = userInfo.selectedServiceId;
@@ -190,7 +192,7 @@ class App2 extends React.Component {
                           events={this.state.calendarEvents}
                           getSelectedDate={this.getSelectedDate}
                         />
-                        <SentButton color="primary" onClick={this.sentData}>
+                        <SentButton color="primary" onClick={this.sendData}>
                           Sent Book
                         </SentButton>
                       </>

@@ -20,8 +20,8 @@ class SlotCell extends React.Component {
 
   checkAfterToday = () => {
     const { time } = this.state;
+    // add "start of day" to make sure "now" starts at 00:00
     const now = moment(new Date()).startOf("day");
-    // 加了 start of day 後就沒問題了，確保 now 從 00:00 開始才會是大於等於一天
     const dayAfterToday = time.diff(now, "days");
     const noWorkDay = time.days();
     if (dayAfterToday > 0 && noWorkDay !== 0 && noWorkDay !== 6) {

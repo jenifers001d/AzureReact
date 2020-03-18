@@ -74,7 +74,6 @@ class ScheduleWeekdays extends React.Component {
             tempStartTime: e.target.value,
             tempEndTime: moment(e.target.value + duration),
           },
-          mouseIsDown: true,
         },
         () => {
           this.props.getDate(this.state.tempBookTime); // send selected time back to App2.js
@@ -165,7 +164,7 @@ class ScheduleWeekdays extends React.Component {
     let endHourOfService = 17,
       endMinuteOfService = 0;
     // Retrieve business hour which is controlled by admin
-    if (timeSlots) {
+    if (timeSlots && timeSlots.length !== 0) {
       let re = /\d+/g;
       let foundStart = timeSlots[0].start.match(re);
       let foundEnd = timeSlots[0].end.match(re);
@@ -253,14 +252,24 @@ class ScheduleWeekdays extends React.Component {
     let day, classes, curPosition, diff;
     // A week is 7 days, produce each column and slots from Sun, Mon to Sat
     for (let i = 0; i < 7; i++) {
-      // add day by day to the start day of this week
+      // add day by day to the start day of this week(Sun > Mon > ... > Sat)
       day = moment(startDay).add(i, "d");
-      let businessDay, businessHour;
+      //let businessDay1;
+      let businessHour;
       // If there is no open work slot which are set by admin, the day will not be shown
       if (business) {
-        businessDay = moment(startDay).days(business["businessHours"][i].day);
-        businessHour = business.businessHours[i].timeSlots;
-        if (businessDay.days() === day.days() && businessHour.length === 0) {
+        //businessDay1 = moment(startDay).days(business["businessHours"][i].day);
+        //businessHour = business.businessHours[i].timeSlots;
+
+        //from open business day array find the same day with my day-variable
+        let dayEqualToBusinessDay = business.businessHours.find(item => {
+          let businessDay = moment(startDay).days(item.day);
+          return businessDay.days() === day.days();
+        });
+        businessHour = dayEqualToBusinessDay.timeSlots;
+
+        //if (businessDay1.days() === day.days() && businessHour.length === 0) {
+        if (businessHour.length === 0) {
           continue;
         }
       }
@@ -274,8 +283,11 @@ class ScheduleWeekdays extends React.Component {
       } else if (diff === 0) {
         classes = "today";
       }
-      if (curPosition.days() === 0 || curPosition.days() === 6) {
-        classes += " no-work-day";
+      //if (curPosition.days() === 0 || curPosition.days() === 6) {
+      if (businessHour) {
+        if (businessHour.length === 0) {
+          classes += " no-work-day";
+        }
       }
 
       // check if there is appointments at curPosition "that" day.
